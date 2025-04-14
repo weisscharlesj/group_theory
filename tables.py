@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import numpy as np
 import cmath, math
 
@@ -366,7 +368,7 @@ masks = {'c1': [1], 'cs': [1, 1], 'ci': [1, 1], 'c2': [1, 1], 'c3': [1, 1, 0],
 
 
 
-def R(a, k, n):
+def R(a, n, k):
     """Calculates the influence of a single, stationary atom's x,y,z vectors when
     calculating the reducible representations for all motions of atoms in a molecle.
     
