@@ -47,24 +47,24 @@ class Test_ReducibleMethods():
         assert np.all(n_irred == np.array([3, 1, 3, 2]))
 
     def test_vibe(self):
-        water = Reducible([9, -1, 3, 1], 'c2v', vibe_only=False)
-        tDCE = Reducible([18, 0, 0, 6], 'C2h', vibe_only=False)
+        water = Reducible([9, -1, 3, 1], 'c2v', all_motion=True)
+        tDCE = Reducible([18, 0, 0, 6], 'C2h', all_motion=True)
 
         assert np.all(water.vibe_modes() == np.array([2, 0, 1, 0]))
         assert np.all(tDCE.vibe_modes() == np.array([5, 1, 2, 4]))
 
     def test_ir(self):
-        water = Reducible([9, -1, 3, 1], 'c2v', vibe_only=False)
-        pentCOMn = Reducible([5, 2, 1, 3, 0, 3], 'd3h', vibe_only=True)
-        tDCE = Reducible([18, 0, 0, 6], 'c2h', vibe_only=False)
+        water = Reducible([9, -1, 3, 1], 'c2v', all_motion=True)
+        pentCOMn = Reducible([5, 2, 1, 3, 0, 3], 'd3h', all_motion=False)
+        tDCE = Reducible([18, 0, 0, 6], 'c2h', all_motion=True)
 
         assert np.all(water.ir_active() == np.array([2, 0, 1, 0]))
         assert np.all(pentCOMn.ir_active() == np.array([0, 0, 1, 0, 1, 0]))
         assert np.all(tDCE.ir_active() == np.array([0, 0, 2, 4]))
 
     def test_raman(self):
-        water = Reducible([9, -1, 3, 1], 'c2v', vibe_only=True)
-        tDCE = Reducible([18, 0, 0, 6], 'c2h', vibe_only=True)
+        water = Reducible([9, -1, 3, 1], 'c2v', all_motion=True)
+        tDCE = Reducible([18, 0, 0, 6], 'c2h', all_motion=True)
 
         assert np.all(water.raman_active() == np.array([2, 0, 1, 0]))
         assert np.all(tDCE.raman_active() == np.array([5, 1, 0, 0]))
@@ -81,10 +81,10 @@ class Test_ReducibleMethods():
 
     def test_from_irred(self):
         test_rep = Reducible.from_irred([1, 0, 1, 0], 'c2v')
-        true_rep = Reducible([2, 0, 2, 0], 'c2v', vibe_only=True)
+        true_rep = Reducible([2, 0, 2, 0], 'c2v', all_motion=False)
         assert np.all(test_rep.gamma == true_rep.gamma)
 
     @pytest.mark.xfail()
     def test_fail(self):
-        water = Reducible([9, -1, 3, 1], 'c2v', vibe_only=True)
+        water = Reducible([9, -1, 3, 1], 'c2v', all_motion=False)
         assert np.all(water.ir_active() == np.array([2, 0, 1, 0]))
