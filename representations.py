@@ -199,6 +199,10 @@ class Reducible:
         reducible representation, the rotational and translational modes are
         automatically subtracted out.
 
+        Parameters
+        ----------
+        None
+
         Returns
         -------
         Numpy array
@@ -219,6 +223,10 @@ class Reducible:
         the reducible representation, the rotational and translational modes
         are automatically subtracted out.
 
+        Parameters
+        ----------
+        None
+
         Returns
         -------
         Numpy array
@@ -234,7 +242,7 @@ class Reducible:
 
     @classmethod
     def from_irred(cls, n_irred, group, all_motion=False):
-        """Create reducible for number of irreducibiel representations.
+        """Create reducible from number of irreducibiel representations.
 
         Alternative constructor that returns a reducible representation
         given the number of each irreducible representations that comprise
@@ -244,13 +252,13 @@ class Reducible:
         ----------
         n_irred: array_like
             Number of each irreducible representations in the returned
-            reducible representation
+            reducible representation.
         group: str
             Point group in Schoelflies notation (e.g., 'C2v').  This is
             case-insentive.
         all_motion: bool
             Whether the resulting reducible representation represents all
-            motions (rotration, vibration, and translation)
+            motions (rotration, vibration, and translation).
 
         Returns
         -------
@@ -269,7 +277,6 @@ class Reducible:
         >>> rep = Reducible.from_irred([3, 1, 1], 'C3v')
         >>> rep.gamma
         array([6, 3, 2])
-
         """
         irred_sum = np.sum((tables[group.lower()].T * n_irred).T, axis=0)
 
@@ -304,7 +311,6 @@ class Reducible:
         if np.all(np.mod(n_atoms, 1) == 0):
             gamma = np.rint(n_atoms * np.array(atom_contribution[group]))
             return cls(gamma.astype(int), group, all_motion=True)
-
         else:
             print("""Number of stationary atoms (n_atoms) must be an integer
                   value.""")
