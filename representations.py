@@ -25,7 +25,7 @@ from .tables import (
 
 def get_header(group):
     """
-    Prints the header for a character table given the point group.
+    Print the header for a character table given the point group.
 
     Parameters
     ----------
@@ -36,12 +36,12 @@ def get_header(group):
     -------
     Prints character table header indicating order of symmetry operations
     """
-
     print(*headers[group.lower()])
+
 
 def get_point_groups():
     """
-    Prints supported point group Schoenflies notations
+    Print supported point group Schoenflies notations.
 
     Parameters
     ----------
@@ -52,7 +52,6 @@ def get_point_groups():
     Prints Schoelflies notations for character tables available
 
     """
-
     pg = ('C1', 'Cs', 'Ci', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7', 'C8', 'D2',
           'D3', 'D4', 'D5', 'D6', 'C2v', 'C3v', 'C4v', 'C5v', 'C6v', 'C2h',
           'C3h', 'C4h', 'C5h', 'C6h', 'D2h', 'D3h', 'D4h', 'D5h', 'D6h', 'D8h',
@@ -61,10 +60,10 @@ def get_point_groups():
 
     print(*pg)
 
+
 def get_mulliken(group):
     """
-    Prints mulliken symbols of irreducible reprensentation in order
-    returned by decomp_reduc() method.
+    Print mulliken symbols of irreducible reprensentation in order.
 
     Parameters
     ----------
@@ -76,14 +75,15 @@ def get_mulliken(group):
     Prints mulliken notations for irreducible representations
 
     """
-
     print(*mulliken[group.lower()])
 
 
-
 class Reducible:
-    """Reducible representation object for calculating number and type of
-    irreducible representations and calculating IR and Raman active vibrational modes
+    """Reducible representation object.
+
+    Reducible representation object for calculating number and type of
+    irreducible representations and calculating IR and Raman active vibrational
+    modes.
     """
 
     def __init__(self, gamma, group, vibe_only=True):
@@ -104,7 +104,6 @@ class Reducible:
         None.
 
         """
-
         if np.all(np.mod(gamma, 1) != 0):
             print('Invalid representation - must be whole numbers.')
         elif group.lower() not in tables.keys():
@@ -116,10 +115,11 @@ class Reducible:
             self.gamma = gamma
             self.vibe_only = vibe_only
 
-
     def decomp_reduc(self):
         """
-        Decomposes a reducible representation for a specific point group and
+        Decompose reducible representation.
+
+        Decompose a reducible representation for a specific point group and
         returns the number of each irreducible representation in the reducible.
 
         Parameters
@@ -146,7 +146,6 @@ class Reducible:
         array([3, 4, 1, 1])
 
         """
-
         table = tables[self.group]
         gamma = np.array(self.gamma)
 
@@ -156,13 +155,12 @@ class Reducible:
             mask = np.array(masks[self.group], dtype=bool)
             n_i = gamma.dot(np.linalg.inv(table)).real[mask]
 
-
         return np.rint(n_i).astype(int)
 
-
     def vibe_modes(self):
-        """
-        Returns the number of vibrational modes after rotation and translation
+        """Return vibrational modes.
+
+        Return the number of vibrational modes after rotation and translation
         are subtracted out.
 
         Parameters
@@ -170,7 +168,7 @@ class Reducible:
         None
 
         Returns
-        ________
+        -------
         Numpy array
 
         Examples
@@ -178,29 +176,26 @@ class Reducible:
         >>> rep = ReduceRep([9, -1, 3, 1], 'c2v', vibe_only=False)
         >>> rep.vide_modes()
         array([2, 0, 1, 0])
-
         """
-
-        if self.vibe_only == True:
+        if self.vibe_only is True:
             return self.decomp_reduc()
             print('Already only contains vibrational modes.')
         else:
             rot_trans = rot_trans_modes[self.group.lower()]
             irreducibles = self.decomp_reduc()
 
-
         return np.array(irreducibles) - np.array(rot_trans)
 
-
     def ir_active(self):
-        """
-        Returns the number of each irreducible representation that are IR active
-        in the given reducible representation. If vibe_only=False for the reducible
-        representation, the rotational and translational modes are automatically
-        subtracted out.
+        """Retrun IR active modes.
+
+        Return the number of each irreducible representation that are IR active
+        in the given reducible representation. If vibe_only=False for the
+        reducible representation, the rotational and translational modes are
+        automatically subtracted out.
 
         Returns
-        ----------
+        -------
         Numpy array
 
         Examples
@@ -212,10 +207,10 @@ class Reducible:
         """
         irreducibles = self.decomp_reduc()
 
-        if self.vibe_only == True:
+        if self.vibe_only is True:
             return irreducibles * np.array(IR_active[self.group])
 
-        if self.vibe_only == False:
+        if self.vibe_only is False:
             rot_trans = np.array(rot_trans_modes[self.group.lower()])
 
             vibrations = np.array(irreducibles) - rot_trans
@@ -223,14 +218,15 @@ class Reducible:
             return vibrations * np.array(IR_active[self.group.lower()])
 
     def raman_active(self):
-        """
-        Returns the number of each irreducible representation that are Raman active
-        in the given reducible representation. If vibe_only=False for the reducible
-        representation, the rotational and translational modes are automatically
-        subtracted out.
+        """Return Raman active modes.
+
+        Return the number of each irreducible representation that are Raman
+        active in the given reducible representation. If vibe_only=False for
+        the reducible representation, the rotational and translational modes
+        are automatically subtracted out.
 
         Returns
-        ----------
+        -------
         Numpy array
 
         Examples
@@ -240,22 +236,21 @@ class Reducible:
         array([2, 0, 1, 0])
 
         """
-
         rot_trans = np.array(rot_trans_modes[self.group.lower()])
         irreducibles = self.decomp_reduc()
-
 
         vibrations = np.array(irreducibles) - rot_trans
 
         if np.any((vibrations % 1) != 0):
-            print("Invalid reducible representation - all values must be whole numbers.")
+            print(""""Invalid reducible representation - all values must
+                  be whole numbers.""")
         else:
             return vibrations * np.array(Raman_active[self.group.lower()])
 
-
     @classmethod
     def from_irred(cls, n_irred, group, vibe_only=True):
-        """
+        """Create reducible for number of irreducibiel representations.
+
         Alternative constructor that returns a reducible representation
         given the number of each irreducible representations that comprise
         the reducible representation and the point group.
@@ -263,8 +258,8 @@ class Reducible:
         Parameters
         ----------
         n_irred: array_like
-            Number of each irreducible representations in the returned reducible
-            representation
+            Number of each irreducible representations in the returned
+            reducible representation
         group: str
             Point group in Schoelflies notation (e.g., 'C2v')
         vibe_only: bool
@@ -272,7 +267,7 @@ class Reducible:
             vibrational modes
 
         Returns
-        --------
+        -------
         Reducible object
 
         Examples
@@ -289,17 +284,15 @@ class Reducible:
         >>> rep.gamma
         array([6, 3, 2])
 
-
         """
-
         irred_sum = np.sum((tables[group.lower()].T * n_irred).T, axis=0)
 
         return cls(np.rint(irred_sum).astype(int), group, vibe_only=True)
 
-
     @classmethod
     def from_atoms(cls, n_atoms, group):
-        """
+        """Create a representation based on number of stationary atoms.
+
         Alternative constructor that returns a reducible representation
         with all motions (rotation, translation, and vibration) given the
         number of atoms that do NOT move (i.e., translate) when carrying out
@@ -316,11 +309,9 @@ class Reducible:
 
 
         Returns
-        --------
+        -------
         Reducible object
-
         """
-
         n_atoms = np.array(n_atoms)
 
         if np.all(np.mod(n_atoms, 1) == 0):
@@ -328,4 +319,5 @@ class Reducible:
             return cls(gamma.astype(int), group, vibe_only=False)
 
         else:
-            print('Number of stationary atoms (n_atoms) must be an integer value.')
+            print("""Number of stationary atoms (n_atoms) must be an integer
+                  value.""")
