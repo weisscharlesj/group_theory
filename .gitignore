@@ -1,0 +1,10 @@
+*.DS_Store
+*.pdf
+*.bak
+*.ini
+*.pyc
+*.ipynb
+*.ipynb_checkpoints
+*.png
+*.zip
+/Literature
