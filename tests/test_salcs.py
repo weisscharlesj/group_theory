@@ -3,7 +3,7 @@
 import sympy
 from ..salcs import (
     calc_salcs_projection,
-    calc_salcs_basis,
+    calc_salcs_func,
     _expand_irreducible,
     _angles_to_vectors,
 
@@ -35,8 +35,8 @@ def test_calc_salcs_projection():
             [6*a1 - 6*a2, 0, 0, 0, 6*a1 + 6*a2, 0])
 
 
-def test_calc_salcs_basis():
-    assert (calc_salcs_basis([[0, 0], [120, 0], [240, 0]], 'c3v', mode='angle')
+def test_calc_salcs_func():
+    assert (calc_salcs_func([[0, 0], [120, 0], [240, 0]], 'c3v', mode='angle')
             == [[1.0, 1.0, 1.0],
                 0,
                 [[1.0, -0.5, -0.5],
@@ -44,7 +44,7 @@ def test_calc_salcs_basis():
                  [1.0, -0.5, -0.5],
                  [0.0, -1.0, 1.0]]])
 
-    assert (calc_salcs_basis([[1, 0, 0], [0, 1, 0], [-1, 0, 0], [0, -1, 0]],
+    assert (calc_salcs_func([[1, 0, 0], [0, 1, 0], [-1, 0, 0], [0, -1, 0]],
                             'd4h', mode='vector') == [
                                                      [1, 1, 1, 1],
                                                       0,
