@@ -41,7 +41,7 @@ def test_decomp_reduc(gamma, true_n_irred, group):
 class Test_ReducibleMethods():
 
     def test_decomp_reduc(self):
-        water = Reducible([9, -1, 3, 1], 'c2v')
+        water = Reducible([9, -1, 3, 1], 'c2v', all_motion=True)
         # trans-dichloroethene
         tDCE = Reducible([18, 0, 0, 6], 'C2h', all_motion=True)
         # cis-dichloroethene
