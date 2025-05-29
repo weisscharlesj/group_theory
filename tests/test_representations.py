@@ -32,15 +32,15 @@ test_data = (
 
 
 @pytest.mark.parametrize('gamma, true_n_irred, group', test_data)
-def test_decomp_reduc(gamma, true_n_irred, group):
-    calc_n_irred = Reducible(gamma, group).decomp_reduc()
+def test_decomp(gamma, true_n_irred, group):
+    calc_n_irred = Reducible(gamma, group).decomp()
 
     assert np.all(true_n_irred == calc_n_irred)
 
 
 class Test_ReducibleMethods():
 
-    def test_decomp_reduc(self):
+    def test_decomp(self):
         water = Reducible([9, -1, 3, 1], 'c2v', all_motion=True)
         # trans-dichloroethene
         tDCE = Reducible([18, 0, 0, 6], 'C2h', all_motion=True)
@@ -49,10 +49,10 @@ class Test_ReducibleMethods():
         # bromopentacarbonylmolybdenum(0)
         pCOBrMn = Reducible([5, 1, 1, 3, 1], 'C4v', all_motion=False)
 
-        assert np.all(water.decomp_reduc() == np.array([3, 1, 3, 2]))
-        assert np.all(tDCE.decomp_reduc() == np.array([6, 3, 3, 6]))
-        assert np.all(cDCE.decomp_reduc() == np.array([6, 3, 6, 3]))
-        assert np.all(pCOBrMn.decomp_reduc() == np.array([2, 0, 1, 0, 1]))
+        assert np.all(water.decomp() == np.array([3, 1, 3, 2]))
+        assert np.all(tDCE.decomp() == np.array([6, 3, 3, 6]))
+        assert np.all(cDCE.decomp() == np.array([6, 3, 6, 3]))
+        assert np.all(pCOBrMn.decomp() == np.array([2, 0, 1, 0, 1]))
 
     def test_vibe(self):
         water = Reducible([9, -1, 3, 1], 'c2v', all_motion=True)

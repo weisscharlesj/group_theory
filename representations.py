@@ -118,7 +118,7 @@ class Reducible:
             self.gamma = gamma
             self.all_motion = all_motion
 
-    def decomp_reduc(self):
+    def decomp(self):
         """
         Decompose reducible representation into number of irreducbiles.
 
@@ -144,12 +144,12 @@ class Reducible:
 
         Examples
         --------
-        >>> rep = ReduceRep([9, -1, 3, 1], 'c2v', all_motion=True)
-        >>> rep.decomp_reduc()
+        >>> rep = Reducible([9, -1, 3, 1], 'c2v', all_motion=True)
+        >>> rep.decomp()
         array([3, 1, 3, 2])
 
-        >>> rep = ReduceRep([15, 0, 0, 7, -2, -2], 'C3h, all_motion=False)
-        >>> rep.decomp_reduc()
+        >>> rep = Reducible([15, 0, 0, 7, -2, -2], 'C3h, all_motion=False)
+        >>> rep.decomp()
         array([3, 4, 1, 1])
         """
         table = tables[self.group]
@@ -179,15 +179,15 @@ class Reducible:
 
         Examples
         --------
-        >>> rep = ReduceRep([9, -1, 3, 1], 'c2v', all_motion=True)
+        >>> rep = Reducible([9, -1, 3, 1], 'c2v', all_motion=True)
         >>> rep.vide_modes()
         array([2, 0, 1, 0])
         """
         if self.all_motion is False:
-            return self.decomp_reduc()
+            return self.decomp()
         else:
             rot_trans = rot_trans_modes[self.group]
-            irreducibles = self.decomp_reduc()
+            irreducibles = self.decomp()
 
         return np.array(irreducibles) - np.array(rot_trans)
 
@@ -209,7 +209,7 @@ class Reducible:
 
         Examples
         --------
-        >>> rep = ReduceRep([9, -1, 3, 1], 'c2v', all_motion=True)
+        >>> rep = Reducible([9, -1, 3, 1], 'c2v', all_motion=True)
         >>> rep.ir_active([3, 1, 3, 2, 'C2v')
         array([2, 0, 1, 0])
         """
@@ -233,7 +233,7 @@ class Reducible:
 
         Examples
         --------
-        >>> rep = ReduceRep([9, -1, 3, 1], 'c2v', all_motion=True)
+        >>> rep = Reducible([9, -1, 3, 1], 'c2v', all_motion=True)
         >>> rep.raman_active([3, 1, 3, 2, 'C2v')
         array([2, 0, 1, 0])
 
