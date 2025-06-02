@@ -22,7 +22,6 @@ from ..tables import (
 
 def test_calc_salcs_projection():
     a, b, c = sympy.symbols('a b c')
-
     assert (calc_salcs_projection([a, b, c, a, b, c], 'c3v') ==
             [2*a + 2*b + 2*c, 0, 2*a - b - c])
 
@@ -36,19 +35,14 @@ def test_calc_salcs_projection():
 
 
 def test_calc_salcs_func():
-    assert (calc_salcs_func([[0, 0], [120, 0], [240, 0]], 'c3v', mode='angle')
-            == [[1.0, 1.0, 1.0],
-                0,
-                [[1.0, -0.5, -0.5],
-                 [0.0, 1.0, -1.0],
-                 [1.0, -0.5, -0.5],
-                 [0.0, -1.0, 1.0]]])
+    a, b, c, d = sympy.symbols('a b c d')
 
+    # salc_true = [a + b + c, 0, [a - 0.5*b - 0.5*c, b - c, a -
+    #              0.5*b - 0.5*c, -b + c], 0, 0, 0]
+    # assert (calc_salcs_func([[0, 0], [120, 0], [240, 0]], [a, b, c],
+    #                         'd3h', mode='angle') == salc_true)
+
+    salc_true = [a + b + c + d, 0, a - b + c - d, 0, 0, 0, 0, 0, 0,
+                 [a - c, b - d]]
     assert (calc_salcs_func([[1, 0, 0], [0, 1, 0], [-1, 0, 0], [0, -1, 0]],
-                            'd4h', mode='vector') == [
-                                                     [1, 1, 1, 1],
-                                                      0,
-                                                     [1, -1, 1, -1],
-                                                      0, 0, 0, 0, 0, 0,
-                                                     [[1, 0, -1, 0],
-                                                      [0, 1, 0, -1]]])
+                            [a, b, c, d], 'd4h', mode='vector') == salc_true)

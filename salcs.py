@@ -8,6 +8,7 @@ operator method or using the symmetry functions in the character tables.
 
 from math import cos, sin, radians
 import numpy as np
+import sympy
 
 from .tables import (
     tables,
@@ -183,7 +184,7 @@ def _normalize_salcs(salcs):
 
     Returns
     -------
-    List or nested list.
+    np.array
 
     """
     normalized_values = []
@@ -198,7 +199,45 @@ def _normalize_salcs(salcs):
     return normalized_values
 
 
-def calc_salcs_func(ligands, group, mode='vector'):
+def _weights_to_symbols(weights, symbols):
+    """
+    Convert ligand weights to symbolic representations.
+
+    Convert ligand or outer atom weights (e.g., [2, -0.5, -0.5]) to a symbolic
+    to a symbolic representation (e.g., [2*a, -0.5*b, -0.5*c]).
+
+    Parameters
+    ----------
+    weights : list
+        List or nested list containing weights from each ligand or outer atom.
+    symbols : list of Sympy symbols
+        List of SymPy symbols the user provided to represent the ligdans or
+        outer atoms..
+
+    Returns
+    -------
+    Array containing symbolic weights of each ligand or outer atom.
+
+    """
+    symbolic_wt = []
+    # print(weights)
+    for weight in weights:
+        if weight == 0:
+            symbolic_wt.append(0)
+        else:
+            try:
+                sym = np.array(weight).dot(np.array(symbols))
+                if isinstance(sym, np.ndarray):
+                    symbolic_wt.append(sym.tolist())
+                else:
+                    symbolic_wt.append(sym)
+            except ValueError:
+                symbolic_wt.append(_weights_to_symbols(weight, symbols))
+
+    return symbolic_wt
+
+
+def calc_salcs_func(ligands, symbols, group, mode='vector'):
     """
     Return SALCs from symmetry functions.
 
@@ -211,6 +250,8 @@ def calc_salcs_func(ligands, group, mode='vector'):
     ----------
     ligand : list or nested list
         Nested list of SALCs.
+    symbols : SymPy symbols
+        SymPy symbols or variables prepresenting outer ligands or atoms.
     group : str
         Point group (e.g., 'C2v').
     mode : 'vector' or 'angle'
@@ -226,15 +267,18 @@ def calc_salcs_func(ligands, group, mode='vector'):
 
     Examples
     --------
+    >>> import sympy
+    >>> a, b, c, d = sympy.symbols('a b c d')
     >>> calc_salcs_func([[1, 0, 0], [0, 1, 0], [-1, 0, 0], [0, -1, 0]],
-                            'd4h', mode='vector')
+                            [a, b, c, d], 'd4h', mode='vector')
     >>> np.array([[1, 1, 1, 1],
                   0,
                  [1, -1, 1, -1],
                  0, 0, 0, 0, 0, 0,
                  [[1, 0, -1, 0],
                   [0, 1, 0, -1]]])
-    >>> calc_salcs_func([[0, 0], [120, 0], [240, 0]], 'd3d', mode='angle')
+    >>> calc_salcs_func([[0, 0], [120, 0], [240, 0]], [a, b, c], 'd3h',
+                        mode='angle')
     >>> np.array([[1.0, 1.0, 1.0],
                   0,
                   [[1.0, -0.5, -0.5],
@@ -251,9 +295,11 @@ def calc_salcs_func(ligands, group, mode='vector'):
 
     salcs = []
     for basis_func in symmetry_func_dict[group]:
-        if basis_func == 0 or basis_func == 1:
-            salcs.append(basis_func)
+        if basis_func == 0:
+            salcs.append(0)
+        elif basis_func == 1:
+            salcs.append(1)
         else:
             salcs.append(_eval_sym_func(ligand_vectors, basis_func))
 
-    return _normalize_salcs(salcs)
+    return _weights_to_symbols(_normalize_salcs(salcs), symbols)
