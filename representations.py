@@ -13,13 +13,13 @@ import numpy as np
 # data tables in character_tables.py file
 from .tables import (
     tables,
-    headers,
-    mulliken,
     rot_trans_modes,
     IR_active,
     Raman_active,
     masks,
     atom_contribution,
+    mulliken,
+    headers
 )
 
 
@@ -90,6 +90,7 @@ class Reducible:
 
     def __init__(self, gamma, group, all_motion=False):
         """
+        Initialize Reducible representation object.
 
         Parameters
         ----------
@@ -118,7 +119,38 @@ class Reducible:
             self.gamma = gamma
             self.all_motion = all_motion
 
-    def decomp(self):
+    def return_dict(func):
+        """
+        Return results as a dictionary.
+
+        Return a list or array as a dictionary with with mulliken symbols as
+        the keys.
+
+        Parameters
+        ----------
+        arr : array_like
+            List or array containing results corresponding to irreducible
+            representations.
+        group : string
+            Point group Schoelflies notation (e.g., 'C2v').  This is
+            case-insentive.
+
+        Returns
+        -------
+        Dictionary.
+
+        """
+        def wrapper(self, *args, **kwargs):
+            if kwargs.get('to_dict'):
+                keys = mulliken[self.group.lower()]
+                values = func(self, *args, **kwargs)
+                return dict(zip(keys, values.tolist()))
+            else:
+                return func(self, *args, **kwargs)
+        return wrapper
+
+    @return_dict
+    def decomp(self, to_dict=False):
         """
         Decompose reducible representation into number of irreducbiles.
 
@@ -129,12 +161,15 @@ class Reducible:
 
         Parameters
         ----------
-        gamma: array_like
+        gamma : array_like
                Reducible representation with symmetry operations in the order
                provided by get_header(group).
-        group: str
+        group : str
             Point group of representation in Schoelflies notation
             (e.g., 'C2v'). This is case-insentive.
+        to_dict : bool
+            True causes function to return a dictionary with mulliken symbols
+            as the keys.
 
         Returns
         -------
@@ -148,9 +183,11 @@ class Reducible:
         >>> rep.decomp()
         array([3, 1, 3, 2])
 
-        >>> rep = Reducible([15, 0, 0, 7, -2, -2], 'C3h, all_motion=False)
+        >>> rep = Reducible([15, 0, 0, 7, -2, -2], 'C3h', all_motion=False)
         >>> rep.decomp()
         array([3, 4, 1, 1])
+        >>> rep.decomp(to_dict=True)
+        >>> {"A'": 3, 'A"': 4, "E'": 2, 'E"': 1}
         """
         table = tables[self.group]
         gamma = np.array(self.gamma)
@@ -163,7 +200,8 @@ class Reducible:
 
         return np.rint(n_i).astype(int)
 
-    def vibe_modes(self):
+    @return_dict
+    def vibe_modes(self, to_dict=False):
         """Return vibrational modes.
 
         Return the number of vibrational modes after rotation and translation
@@ -171,17 +209,21 @@ class Reducible:
 
         Parameters
         ----------
-        None
+        to_dict : bool
+            True causes function to return a dictionary with mulliken symbols
+            as the keys.
 
         Returns
         -------
-        Numpy array
+        Numpy array or dictionary
 
         Examples
         --------
         >>> rep = Reducible([9, -1, 3, 1], 'c2v', all_motion=True)
         >>> rep.vide_modes()
         array([2, 0, 1, 0])
+        >>> rep.vibe_modes(to_dict)
+        >>> {'A1': 2, 'A2': 0, 'B1': 1, 'B2': 0}
         """
         if self.all_motion is False:
             return self.decomp()
@@ -191,7 +233,8 @@ class Reducible:
 
         return np.array(irreducibles) - np.array(rot_trans)
 
-    def ir_active(self):
+    @return_dict
+    def ir_active(self, to_dict=False):
         """Return IR active vibrational modes.
 
         Return the number of each irreducible representation that are IR active
@@ -201,21 +244,30 @@ class Reducible:
 
         Parameters
         ----------
-        None
+        to_dict : bool
+            True causes function to return a dictionary with mulliken symbols
+            as the keys.
 
         Returns
         -------
-        Numpy array
+        Numpy array or dictionary
 
         Examples
         --------
         >>> rep = Reducible([9, -1, 3, 1], 'c2v', all_motion=True)
         >>> rep.ir_active([3, 1, 3, 2, 'C2v')
         array([2, 0, 1, 0])
+        >>> rep = Reducible([5, 2, 1, 3, 0, 3], 'd3h', all_motion=False)
+        >>> rep.ir_active()
+        >>> array([0, 0, 1, 0, 1, 0])
+        >>> rep.ir_active(to_dict=True)
+        >>>  {"A1'": 0, "A2'": 0, "E'": 1, 'A1"': 0, 'A2"': 1, 'E"': 0}
+
         """
         return self.vibe_modes() * np.array(IR_active[self.group])
 
-    def raman_active(self):
+    @return_dict
+    def raman_active(self, to_dict=False):
         """Return Raman active vibrational modes.
 
         Return the number of each irreducible representation that are Raman
@@ -225,17 +277,24 @@ class Reducible:
 
         Parameters
         ----------
-        None
+        to_dict : bool
+            True causes function to return a dictionary with mulliken symbols
+            as the keys.
 
         Returns
         -------
-        Numpy array
+        Numpy array or dictionary
 
         Examples
         --------
         >>> rep = Reducible([9, -1, 3, 1], 'c2v', all_motion=True)
         >>> rep.raman_active([3, 1, 3, 2, 'C2v')
         array([2, 0, 1, 0])
+        >>> rep = Reducible([5, 2, 1, 3, 0, 3], 'd3h', all_motion=False)
+        >>> rep.raman_active()
+        >>> array([2, 0, 1, 0, 0, 0])
+        >>> rep.raman_active(to_dict=True)
+        >>>  {"A1'": 2, "A2'": 0, "E'": 1, 'A1"': 0, 'A2"': 0, 'E"': 0}
 
         """
         return self.vibe_modes() * np.array(Raman_active[self.group])
@@ -270,10 +329,6 @@ class Reducible:
         >>> rep.gamma
         array([2, 0, 2, 0])
 
-        >>> rep = Reducible.from_irred([3, 1, 3, 2], 'C2v')
-        >>> rep.gamma
-        array([9, -1, 3, 1])
-
         >>> rep = Reducible.from_irred([3, 1, 1], 'C3v')
         >>> rep.gamma
         array([6, 3, 2])
@@ -305,6 +360,12 @@ class Reducible:
         Returns
         -------
         Reducible object
+
+        Examples
+        --------
+        >>> rep = Reducible.from_atoms([4, 2, 4, 2], 'c2v')
+        >>> rep.gamma
+        >>> array([12, -2,  4,  2])
         """
         n_atoms = np.array(n_atoms)
 

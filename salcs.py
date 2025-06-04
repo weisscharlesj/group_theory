@@ -294,12 +294,12 @@ def calc_salcs_func(ligands, symbols, group, mode='vector'):
         raise Exception("Invalide mode input: must be 'angle' or 'vector'")
 
     salcs = []
-    for basis_func in symmetry_func_dict[group]:
-        if basis_func == 0:
+    for sym_func in symmetry_func_dict[group]:
+        if sym_func == 0:
             salcs.append(0)
-        elif basis_func == 1:
+        elif sym_func == 1:
             salcs.append(1)
         else:
-            salcs.append(_eval_sym_func(ligand_vectors, basis_func))
+            salcs.append(_eval_sym_func(ligand_vectors, sym_func))
 
     return _weights_to_symbols(_normalize_salcs(salcs), symbols)
