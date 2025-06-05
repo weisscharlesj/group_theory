@@ -119,7 +119,7 @@ class Reducible:
             self.gamma = gamma
             self.all_motion = all_motion
 
-    def return_dict(func):
+    def return_dict_method(func):
         """
         Return results as a dictionary.
 
@@ -149,7 +149,7 @@ class Reducible:
                 return func(self, *args, **kwargs)
         return wrapper
 
-    @return_dict
+    @return_dict_method
     def decomp(self, to_dict=False):
         """
         Decompose reducible representation into number of irreducbiles.
@@ -200,7 +200,7 @@ class Reducible:
 
         return np.rint(n_i).astype(int)
 
-    @return_dict
+    @return_dict_method
     def vibe_modes(self, to_dict=False):
         """Return vibrational modes.
 
@@ -233,7 +233,7 @@ class Reducible:
 
         return np.array(irreducibles) - np.array(rot_trans)
 
-    @return_dict
+    @return_dict_method
     def ir_active(self, to_dict=False):
         """Return IR active vibrational modes.
 
@@ -266,7 +266,7 @@ class Reducible:
         """
         return self.vibe_modes() * np.array(IR_active[self.group])
 
-    @return_dict
+    @return_dict_method
     def raman_active(self, to_dict=False):
         """Return Raman active vibrational modes.
 

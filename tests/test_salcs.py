@@ -48,7 +48,7 @@ def test_calc_salcs_func():
     salc_true = [a + b + c + d, 0, a - b + c - d, 0, 0, 0, 0, 0, 0,
                  [a - c, b - d]]
     assert (calc_salcs_func([[1, 0, 0], [0, 1, 0], [-1, 0, 0], [0, -1, 0]],
-                            [a, b, c, d], 'd4h', mode='vector') == salc_true)
+                            'd4h', [a, b, c, d], mode='vector') == salc_true)
 
     # trigonal bipyramidal
     a1, a2, e1, e2, e3 = sympy.symbols('a1, a2, e1, e2, e3')
@@ -57,5 +57,5 @@ def test_calc_salcs_func():
                   1.0*e1 - 0.5*e2 - 0.5*e3, -1.0*e2 + 1.0*e3], 0,
                  1.0*a1 - 1.0*a2, 0]
     angles = [[0, 0], [120, 0], [240, 0], [0, 90], [0, -90]]
-    assert(calc_salcs_func(angles, [e1, e2, e3, a1, a2], 'd3h', mode='angle')
+    assert(calc_salcs_func(angles, 'd3h', [e1, e2, e3, a1, a2], mode='angle')
            == salc_true)

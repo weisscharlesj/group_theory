@@ -13,8 +13,40 @@ import sympy
 from .tables import (
     tables,
     symmetry_func_dict,
-    table_coeff
+    table_coeff,
+    mulliken
 )
+
+def return_dict(func):
+    """
+    Return results as a dictionary.
+
+    Return a list or array as a dictionary with with mulliken symbols as
+    the keys.
+
+    Parameters
+    ----------
+    arr : array_like
+        List or array containing results corresponding to irreducible
+        representations.
+    group : string
+        Point group Schoelflies notation (e.g., 'C2v').  This is
+        case-insentive.
+
+    Returns
+    -------
+    Dictionary.
+
+    """
+    def wrapper(*args, **kwargs):
+        if kwargs.get('to_dict'):
+            print(args)
+            keys = mulliken[args[1].lower()]
+            values = func(*args, **kwargs)
+            return dict(zip(keys, values))
+        else:
+            return func(*args, **kwargs)
+    return wrapper
 
 
 # PROJECTION OPERATOR METHOD
@@ -51,7 +83,8 @@ def _expand_irreducible(irred, group):
     return expanded_irred
 
 
-def calc_salcs_projection(projection, group):
+@return_dict
+def calc_salcs_projection(projection, group, to_dict=False):
     """
     Return SALCs using projection operator method.
 
@@ -77,8 +110,9 @@ def calc_salcs_projection(projection, group):
     -------
     >>> import sympy
     >>> a, b, c = sympy.symbols('a b c')
-    >>> projection_operator([a, b, c, a, b, c], 'C3v')
+    >>> calc_salcs_projection([a, b, c, a, b, c], 'c3v')
     >>> [2*a + 2*b + 2*c, , 0, 2*a - b - c]
+    >>>
 
     """
     salcs = []
@@ -237,7 +271,8 @@ def _weights_to_symbols(weights, symbols):
     return symbolic_wt
 
 
-def calc_salcs_func(ligands, symbols, group, mode='vector'):
+@return_dict
+def calc_salcs_func(ligands, group, symbols, mode='vector', to_dict=False):
     """
     Return SALCs from symmetry functions.
 
@@ -270,14 +305,14 @@ def calc_salcs_func(ligands, symbols, group, mode='vector'):
     >>> import sympy
     >>> a, b, c, d = sympy.symbols('a b c d')
     >>> calc_salcs_func([[1, 0, 0], [0, 1, 0], [-1, 0, 0], [0, -1, 0]],
-                            [a, b, c, d], 'd4h', mode='vector')
+                            'd4h', [a, b, c, d], mode='vector')
     >>> np.array([[1, 1, 1, 1],
                   0,
                  [1, -1, 1, -1],
                  0, 0, 0, 0, 0, 0,
                  [[1, 0, -1, 0],
                   [0, 1, 0, -1]]])
-    >>> calc_salcs_func([[0, 0], [120, 0], [240, 0]], [a, b, c], 'd3h',
+    >>> calc_salcs_func([[0, 0], [120, 0], [240, 0]], 'd3h', [a, b, c],
                         mode='angle')
     >>> np.array([[1.0, 1.0, 1.0],
                   0,
