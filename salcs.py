@@ -10,7 +10,7 @@ from math import cos, sin, radians
 import numpy as np
 import sympy
 
-from .tables import (
+from tables import (
     tables,
     symmetry_func_dict,
     table_coeff,
@@ -165,7 +165,7 @@ def _angles_to_vectors(ligand_angles):
 
 def _eval_sym_func(coords, funcs):
     """
-    Evaluate symmetry function.
+    Evaluate symmetry functions for an irreducible prepresentation.
 
     Evalutes symmetr functions using the supplied series of xyz coordinates.
     If all values evaluate as zeros, the irreducible has no SALC, and 0 is
@@ -228,7 +228,7 @@ def _normalize_salcs(salcs):
         elif isinstance(value, int):
             normalized_values.append(value)
         else:
-            normalized_values.append(round(value / max(salcs), 2))
+            normalized_values.append(round(value / max(salcs, key=abs), 2))
 
     return normalized_values
 
