@@ -45,17 +45,25 @@ def test_calc_salcs_func():
     #                         'd3h', mode='angle') == salc_true)
 
     # square planar
-    salc_true = [a + b + c + d, 0, a - b + c - d, 0, 0, 0, 0, 0, 0,
+    salc_true1 = [a + b + c + d, 0, a - b + c - d, 0, 0, 0, 0, 0, 0,
                  [a - c, b - d]]
     assert (calc_salcs_func([[1, 0, 0], [0, 1, 0], [-1, 0, 0], [0, -1, 0]],
-                            'd4h', [a, b, c, d], mode='vector') == salc_true)
+                            'd4h', [a, b, c, d], mode='vector') == salc_true1)
 
     # trigonal bipyramidal
     a1, a2, e1, e2, e3 = sympy.symbols('a1, a2, e1, e2, e3')
-    salc_true = [[1.0*e1 + 1.0*e2 + 1.0*e3, 1.0*a1 + 1.0*a2], 0,
+    salc_true2 = [[1.0*e1 + 1.0*e2 + 1.0*e3, 1.0*a1 + 1.0*a2], 0,
                  [1.0*e1 - 0.5*e2 - 0.5*e3, 1.0*e2 - 1.0*e3,
-                  1.0*e1 - 0.5*e2 - 0.5*e3, -1.0*e2 + 1.0*e3], 0,
+                  1.0*e1 - 0.5*e2 - 0.5*e3, 1.0*e2 - 1.0*e3], 0,
                  1.0*a1 - 1.0*a2, 0]
     angles = [[0, 0], [120, 0], [240, 0], [0, 90], [0, -90]]
     assert(calc_salcs_func(angles, 'd3h', [e1, e2, e3, a1, a2], mode='angle')
-           == salc_true)
+           == salc_true2)
+
+    salc_true3 = [[1.0*e1 + 1.0*e2, 1.0*a1 + 1.0*a2, 1.0*e1 +
+                   1.0*e2, 1.0*e1 + 1.0*e2], 0,
+                  1.0*a1 - 1.0*a2,
+                  [1.0*e1 - 1.0*e2, 1.0*e1 - 1.0*e2]]
+    a1, a2, e1, e2 = sympy.symbols('a1 a2 e1 e2')
+    assert(calc_salcs_func([[0, 0], [-180, 0], [90, -30], [-90, -30]],
+                           'c2v', [a1, a2, e1, e2], mode='angle') == salc_true3)

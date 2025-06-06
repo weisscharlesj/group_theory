@@ -10,7 +10,7 @@ from math import cos, sin, radians
 import numpy as np
 import sympy
 
-from tables import (
+from .tables import (
     tables,
     symmetry_func_dict,
     table_coeff,
