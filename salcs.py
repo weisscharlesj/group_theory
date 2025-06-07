@@ -6,7 +6,7 @@ linear combinations (SALCs) or group orbitals using either the projection
 operator method or using the symmetry functions in the character tables.
 """
 
-from math import cos, sin, radians
+from math import cos, sin, radians, isclose
 import numpy as np
 import sympy
 
@@ -158,7 +158,17 @@ def _angles_to_vectors(ligand_angles):
         x = cos(radians(orbital[0]))*cos(radians(orbital[1]))
         y = sin(radians(orbital[0]))*cos(radians(orbital[1]))
         z = sin(radians(orbital[1]))
-        ligand_vectors.append([x, y, z])
+
+        # convert to int if close
+        vector = []
+        for val in (x, y, z):
+            print(val)
+            if isclose(x, int(x), abs_tol=1e-3):
+                vector.append(int(val))
+            else:
+                vector.append(round(val, 3))
+
+        ligand_vectors.append(vector)
 
     return ligand_vectors
 

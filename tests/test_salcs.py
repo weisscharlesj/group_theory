@@ -37,14 +37,8 @@ def test_calc_salcs_projection():
 
 
 def test_calc_salcs_func():
-    a, b, c, d = sympy.symbols('a b c d')
-
-    # salc_true = [a + b + c, 0, [a - 0.5*b - 0.5*c, b - c, a -
-    #              0.5*b - 0.5*c, -b + c], 0, 0, 0]
-    # assert (calc_salcs_func([[0, 0], [120, 0], [240, 0]], [a, b, c],
-    #                         'd3h', mode='angle') == salc_true)
-
     # square planar
+    a, b, c, d = sympy.symbols('a b c d')
     salc_true1 = [a + b + c + d, 0, a - b + c - d, 0, 0, 0, 0, 0, 0,
                  [a - c, b - d]]
     assert (calc_salcs_func([[1, 0, 0], [0, 1, 0], [-1, 0, 0], [0, -1, 0]],
@@ -60,10 +54,20 @@ def test_calc_salcs_func():
     assert(calc_salcs_func(angles, 'd3h', [e1, e2, e3, a1, a2], mode='angle')
            == salc_true2)
 
-    salc_true3 = [[1.0*e1 + 1.0*e2, 1.0*a1 + 1.0*a2, 1.0*e1 +
-                   1.0*e2, 1.0*e1 + 1.0*e2], 0,
-                  1.0*a1 - 1.0*a2,
-                  [1.0*e1 - 1.0*e2, 1.0*e1 - 1.0*e2]]
+    # seesaw - such as SF4
+    salc_true3 =  [a1 + a2, 0, a1 - a2, 0]
     a1, a2, e1, e2 = sympy.symbols('a1 a2 e1 e2')
     assert(calc_salcs_func([[0, 0], [-180, 0], [90, -30], [-90, -30]],
                            'c2v', [a1, a2, e1, e2], mode='angle') == salc_true3)
+
+    # octahedral
+    a, b, c, d, e, f = sympy.symbols('a b c d e f')
+    salc_true4 = [a + b + c + d + e + f, 0,
+                  [-a - b - c - d + 2*e + 2*f, a - b + c - d],
+                  0, 0, 0, 0, 0, [a - c, b - d, e - f], 0]
+    oh_angle = calc_salcs_func([[0, 0], [90, 0], [180, 0], [270, 0], [0, 90],
+                                [0, -90]], 'oh', [a, b, c, d, e, f], mode='angle')
+    oh_vector = calc_salcs_func([[1, 0, 0], [0, 1, 0], [-1, 0, 0], [0, -1, 0],
+                                 [0, 0, 1], [0, 0, -1]], 'oh', [a, b, c, d, e, f])
+    assert(oh_angle == salc_true4)
+    assert(oh_vector == salc_true4)
