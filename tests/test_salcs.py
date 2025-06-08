@@ -8,16 +8,6 @@ from ..salcs import (
     _angles_to_vectors,
 
 )
-from ..tables import (
-    tables,
-    headers,
-    mulliken,
-    rot_trans_modes,
-    IR_active,
-    Raman_active,
-    masks,
-    atom_contribution
-)
 
 
 def test_calc_salcs_projection():
