@@ -196,6 +196,7 @@ class Reducible:
             n_i = self.gamma
         else:
             mask = np.array(masks[self.group], dtype=bool)
+            # mask removes complex conjugate to avoid "doubling problem"
             n_i = gamma.dot(np.linalg.inv(table)).real[mask]
 
         return np.rint(n_i).astype(int)

@@ -3,9 +3,8 @@
 import numpy as np
 import cmath, math
 
-### CHARACTER TABLE DATA
+# CHARACTER TABLE DATA
 
-# Numerical versions
 pi, i = np.pi, cmath.sqrt(-1)
 c72, c144 = np.cos(72*(pi/180)), np.cos(144*(pi/180))
 r2, r3 = math.sqrt(2), math.sqrt(3)
@@ -17,7 +16,7 @@ E7, E7_ = np.exp(2*pi*i/7), np.exp(-2*pi*i/7)
 E8, E8_ = np.exp(pi*i/4), np.exp(-pi*i/4)
 
 
-## body of character tables
+# body of character tables
 tables = {'c1': np.array([1]),
           'cs': np.array([[1, 1],
                           [1,-1]]),
