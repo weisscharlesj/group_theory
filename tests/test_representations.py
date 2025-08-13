@@ -17,16 +17,15 @@ test_data = (
             ([3, 0, 1], (1, 0, 1), 'c3v'),
             ((6, 0, 2, 0, 0), (1, 1, 1, 1, 1), 'c4v'),
             ((4, 0, 2, 2), (2, 1, 0, 1), 'c2h'),
-            ([15, 0, 0, 7, -2, -2], [3, 4, 2, 1], 'c3h'),
+            ((15, 0, 0, 7, -2, -2), (3, 4, 2, 1), 'c3h'),
+            ((5, -1, 1, -1, -1, 1, -5, 1), (0, 0, 1, 1, 2, 0), 'c4h'),
             ((4, 0, 0, 0), (1, 1, 1, 1), 'd2'),
             ([4, 1, 0, 0, 2], (1, 0, 0, 0, 1), 'Td'),
-            ([4, 0, 0, 2, 0, 0, 0, 4, 2, 0],
-             (1, 0, 1, 0, 0, 0, 0, 0, 0, 1), 'd4h'),
+            ((4, 0, 0, 2, 0, 0, 0, 4, 2, 0), (1, 0, 1, 0, 0, 0, 0, 0, 0, 1), 'd4h'),
             ((5, 2, 1, 3, 0, 3), (2, 0, 1, 0, 1, 0), 'd3h'),
-            ((6, 0, 0, 0, -2, 0, 0, 0, 0, -6, 0, 2),
-             (0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1), 'd6h'),
-            ([6, 0, 0, 2, 2, 0, 0, 0, 4, 2],
-             (1, 0, 1, 0, 0, 0, 0, 0, 1, 0), 'Oh'),
+            ((6, 0, 0, 0, -2, 0, 0, 0, 0, -6, 0, 2), (0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1), 'd6h'),
+            ((6, 0, 0, 2, 2, 0, 0, 0, 4, 2), (1, 0, 1, 0, 0, 0, 0, 0, 1, 0), 'Oh'),
+            ((7, 1, 1, 3, 3, 1, 1, 1, 5, 3), (2, 0, 1, 0, 0, 0, 0, 0, 1, 0), 'oh'),
             ((6, 0, 0, 0, 0, 0), (1, 1, 1, 1), 'c6')
             )
 
@@ -56,7 +55,6 @@ class Test_ReducibleMethods():
         assert np.all(pCOBrMn.decomp(to_dict=True) ==
                       {'A1': 2, 'A2': 0, 'B1': 1, 'B2': 0, 'E': 1})
 
-
     def test_vibe(self):
         water = Reducible([9, -1, 3, 1], 'c2v', all_motion=True)
         tDCE = Reducible([18, 0, 0, 6], 'C2h', all_motion=True)
@@ -79,7 +77,6 @@ class Test_ReducibleMethods():
         assert np.all(water.ir_active(to_dict=True) ==
                       {'A1': 2, 'A2': 0, 'B1': 1, 'B2': 0})
 
-
     def test_raman(self):
         water = Reducible([9, -1, 3, 1], 'c2v', all_motion=True)
         tDCE = Reducible([18, 0, 0, 6], 'c2h', all_motion=True)
@@ -90,7 +87,6 @@ class Test_ReducibleMethods():
         assert np.all(pCOBrMn.raman_active() == np.array([2, 0, 1, 0, 1]))
         assert np.all(tDCE.raman_active(to_dict=True) ==
                       {'Ag': 5, 'Bg': 1, 'Au': 0, 'Bu': 0})
-
 
     def test_from_atoms(self):
         assert np.all(Reducible.from_atoms([6, 0, 0, 6], 'c2h').gamma ==
